@@ -9,6 +9,7 @@ import {
   View,
   Button,
   Image,
+  Linking,
 } from 'react-native';
 
 import {
@@ -19,6 +20,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { encode } from 'base-64';
 
 
 type SectionProps = PropsWithChildren<{
@@ -69,7 +71,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=3000&movies=true');
+        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=30&movies=true');
         setData(response.data);
       } catch (error) {
         //setError(error);
@@ -80,6 +82,19 @@ function App(): React.JSX.Element {
 
     fetchData();
   }, []); // Empty dependency array means this effect runs once after the initial render
+  const teleOpenUrl = (data) => {
+    const str = 'text=' + data;
+    const encodedStr = encode(str);
+    const openUrl = 'https://t.me/blackhole_movie_bot?start=' + encodedStr;
+  
+    console.log('Generated URL:', openUrl);
+  
+    Linking.openURL(openUrl)
+      .then(() => console.log('URL opened successfully'))
+      .catch((error) => console.error('Error opening URL:', error));
+  };
+
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -94,20 +109,25 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
+          {loading && (
+            <Section title="Loading">
+              <Text>Loading...</Text>
+            </Section>
+          )}
+
           {/* Dynamic Sections */}
           {data && data.map((item, index) => (
-          <Section key={index} title={`Movie/Series - ${index + 1}`}>
+          <Section key={index} title={item.movie_name}>
             <Image
                 source={{uri: "https://ucarecdn.com/"+item.img_data[index]+"/"}}
-                style={{width: 480, height: 360}}
+                style={{width: 100, height: 80}}
               />
-            <Text>Name: {item.movie_name} </Text>
-            <Text>Drive Code: {item.drive_code} </Text>
-            <Text>Size (MB): {item.size_mb} </Text>
+            <Button
+                onPress={ ()=>{teleOpenUrl(item.telegram)}}
+               title="Download from telegram"
+               color="#841584"
+             />
+            <Text>Size: {item.size_mb}(MB)</Text>
           </Section>
           ))}
         </View>
