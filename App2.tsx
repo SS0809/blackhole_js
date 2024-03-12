@@ -1,3 +1,4 @@
+import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -7,19 +8,15 @@ import {
   Text,
   useColorScheme,
   View,
-  Button,
-  Image,
 } from 'react-native';
 
 import {
   Colors,
   DebugInstructions,
   Header,
+  LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -51,35 +48,12 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
-
-
-
-
-
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=3000&movies=true');
-        setData(response.data);
-      } catch (error) {
-        //setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array means this effect runs once after the initial render
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -90,6 +64,7 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
+        <Header />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -98,18 +73,16 @@ function App(): React.JSX.Element {
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
           </Section>
-          {/* Dynamic Sections */}
-          {data && data.map((item, index) => (
-          <Section key={index} title={`Movie/Series - ${index + 1}`}>
-            <Image
-                source={{uri: "https://ucarecdn.com/"+item.img_data[index]+"/"}}
-                style={{width: 480, height: 360}}
-              />
-            <Text>Name: {item.movie_name} </Text>
-            <Text>Drive Code: {item.drive_code} </Text>
-            <Text>Size (MB): {item.size_mb} </Text>
+          <Section title="See Your Changes">
+            <ReloadInstructions />
           </Section>
-          ))}
+          <Section title="Debug">
+            <DebugInstructions />
+          </Section>
+          <Section title="Learhn More">
+            Read the docs to discover what to do next:
+          </Section>
+          <LearnMoreLinks />
         </View>
       </ScrollView>
     </SafeAreaView>
