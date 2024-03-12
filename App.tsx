@@ -71,7 +71,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=30&movies=true');
+        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5000&movies=true');
         setData(response.data);
       } catch (error) {
         //setError(error);
