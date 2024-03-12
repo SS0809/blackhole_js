@@ -14,6 +14,7 @@
     "base-64": "^1.0.0",
     "react": "18.2.0",
     "react-native": "^0.73.5",
+    "react-native-cached-image": "^1.4.3",
     "react-native-dotenv": "^3.4.11",
     "react-native-progress": "^5.0.1"
   },
