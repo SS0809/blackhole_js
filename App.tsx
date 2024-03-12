@@ -21,8 +21,8 @@ import {
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { encode } from 'base-64';
-
-
+import * as Progress from 'react-native-progress';
+import {API_URL} from "@env";
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -55,7 +55,13 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 
 
-
+function AppHeader(): React.JSX.Element {
+  return (
+    <View style={styles.header}>
+      <Text style={styles.headerText}>Blackhole</Text>
+    </View>
+  );
+}
 
 
 function App(): React.JSX.Element {
@@ -71,7 +77,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5000&movies=true');
+        const response = await axios.get("https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=1000&movies=true");
         setData(response.data);
       } catch (error) {
         //setError(error);
@@ -102,6 +108,7 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
+      <AppHeader />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
@@ -109,25 +116,25 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          {loading && (
-            <Section title="Loading">
-              <Text>Loading...</Text>
-            </Section>
-          )}
+
 
           {/* Dynamic Sections */}
           {data && data.map((item, index) => (
-          <Section key={index} title={item.movie_name}>
-            <Image
+          <Section key={index}>
+             <Image
                 source={{uri: "https://ucarecdn.com/"+item.img_data[index]+"/"}}
-                style={{width: 100, height: 80}}
+                style={{width: 360, height: 160}}
               />
+              <Text  style={{
+               color: Colors.white,
+               fontSize:14
+               }}> {item.movie_name + '     ' + item.size_mb + 'MB' }</Text>
             <Button
-                onPress={ ()=>{teleOpenUrl(item.telegram)}}
+               onPress={ ()=>{teleOpenUrl(item.telegram)}}
                title="Download from telegram"
                color="#841584"
+               fontSize="12"
              />
-            <Text>Size: {item.size_mb}(MB)</Text>
           </Section>
           ))}
         </View>
@@ -138,21 +145,29 @@ function App(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+    marginTop: 10,
+    paddingHorizontal: 20,
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize:18,
+    marginBottom: -40,
   },
   sectionDescription: {
-    marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
   },
   highlight: {
     fontWeight: '700',
   },
+   header: {
+      backgroundColor: '#3498db',
+      padding: 10,
+      alignItems: 'left',
+    },
+    headerText: {
+      color: '#fff',
+      fontSize: 20,
+    },
 });
 
 export default App;
