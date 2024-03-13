@@ -1,4 +1,4 @@
-name: Blackhole React Native
+name: nodflix React Native
 on:
   push:
     branches:

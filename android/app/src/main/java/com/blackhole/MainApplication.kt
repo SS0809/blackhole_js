@@ -1,4 +1,4 @@
-package com.blackhole
+package com.nodflix
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -10,6 +10,7 @@ import {
   Button,
   Image,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 
 import {
@@ -58,7 +59,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function AppHeader(): React.JSX.Element {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>Blackhole</Text>
+      <Text style={styles.headerText}>nodflix</Text>
     </View>
   );
 }
@@ -74,27 +75,29 @@ function App(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=100&movies=true");
-        setData(response.data);
-      } catch (error) {
-        //setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=100&blackhole_js=true&offset=10");
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, []); // Empty dependency array means this effect runs once after the initial render
+  fetchData();
+}, []);
+ // Empty dependency array means this effect runs once after the initial render
   const teleOpenUrl = (data) => {
     const str = 'text=' + data;
     const encodedStr = encode(str);
-    const openUrl = 'https://t.me/blackhole_movie_bot?start=' + encodedStr;
-  
+    const openUrl = 'https://t.me/nodflix_movie_bot?start=' + encodedStr;
+
     console.log('Generated URL:', openUrl);
-  
+
     Linking.openURL(openUrl)
       .then(() => console.log('URL opened successfully'))
       .catch((error) => console.error('Error opening URL:', error));
@@ -116,7 +119,11 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-
+           {loading && (
+           <View style={[styles.container, styles.horizontal]}>
+           <ActivityIndicator size="large" color="#91171d" />
+           </View>
+           )}
 
           {/* Dynamic Sections */}
           {data && data.map((item, index) => (
@@ -132,7 +139,7 @@ function App(): React.JSX.Element {
             <Button
                onPress={ ()=>{teleOpenUrl(item.telegram)}}
                title="Download from telegram"
-               color="#841584"
+               color="#91171d"
                fontSize="12"
              />
           </Section>
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
    header: {
-      backgroundColor: '#3498db',
+      backgroundColor: '#91171d',
       padding: 10,
       alignItems: 'left',
     },
@@ -168,6 +175,17 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 20,
     },
+container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+horizontal: {
+    justifyContent: 'center',
+    alignItems: 'center', // Center vertically
+    paddingTop: 400,
+    paddingBottom: 400,
+},
 });
 
 export default App;
