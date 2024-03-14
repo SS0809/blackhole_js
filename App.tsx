@@ -19,7 +19,18 @@ import {
   Header,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , Component } from 'react';
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
 import axios from 'axios';
 import { encode } from 'base-64';
 import * as Progress from 'react-native-progress';
@@ -59,7 +70,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function AppHeader(): React.JSX.Element {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>nodflix</Text>
+      <Text style={styles.headerText}>NODflix</Text>
     </View>
   );
 }
@@ -71,26 +82,32 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [offset, setOffset] = useState(0);
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=100&blackhole_js=true&offset=10");
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchData = async () => {
+  try {
+    const response = await axios.get(
+      `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
+    );
+    // Concatenate the new data with the existing data
+    setData(data => [...data, ...response.data]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    setError(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  fetchData();
-}, []);
- // Empty dependency array means this effect runs once after the initial render
+
+  useEffect(() => {
+    fetchData();
+  }, [offset]);
+
+
   const teleOpenUrl = (data) => {
     const str = 'text=' + data;
     const encodedStr = encode(str);
@@ -102,7 +119,18 @@ useEffect(() => {
       .then(() => console.log('URL opened successfully'))
       .catch((error) => console.error('Error opening URL:', error));
   };
-
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    ) {
+    setOffset(offset + 5);
+    fetchData();
+      console.log('Scrolled to last position');
+    }
+  };
 
 
   return (
@@ -114,14 +142,16 @@ useEffect(() => {
       <AppHeader />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+        style={backgroundStyle}
+        onScroll={handleScroll}>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
            {loading && (
            <View style={[styles.container, styles.horizontal]}>
-           <ActivityIndicator size="large" color="#91171d" />
+           {/*<MaterialIndicator  color="#91171d" />*/}
+           <SkypeIndicator  color="#91171d" />
            </View>
            )}
 
@@ -168,7 +198,7 @@ const styles = StyleSheet.create({
   },
    header: {
       backgroundColor: '#91171d',
-      padding: 10,
+      padding: 12,
       alignItems: 'left',
     },
     headerText: {
