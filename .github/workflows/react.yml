@@ -6,6 +6,8 @@ on:
 jobs:
   install-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Install npm dependencies
