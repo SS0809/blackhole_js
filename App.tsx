@@ -90,9 +90,11 @@ function App(): React.JSX.Element {
 const fetchData = async () => {
   try {
     const response = await axios.get(
-      `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
-    );
-    // Concatenate the new data with the existing data
+          `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
+     );
+    const response = await axios.get(
+          `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
+     );
     setData(data => [...data, ...response.data]);
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -111,7 +113,7 @@ const fetchData = async () => {
   const teleOpenUrl = (data) => {
     const str = 'text=' + data;
     const encodedStr = encode(str);
-    const openUrl = 'https://t.me/nodflix_movie_bot?start=' + encodedStr;
+    const openUrl = 'https://t.me/blackhole_movie_bot?start=' + encodedStr;
 
     console.log('Generated URL:', openUrl);
 
