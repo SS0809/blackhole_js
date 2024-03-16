@@ -92,9 +92,6 @@ const fetchData = async () => {
     const response = await axios.get(
           `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
      );
-    const response = await axios.get(
-          `https://k1qsh8ytwc.execute-api.ap-southeast-2.amazonaws.com/default/TELECORE?limit=5&blackhole_js=true&offset=${offset}`
-     );
     setData(data => [...data, ...response.data]);
   } catch (error) {
     console.error('Error fetching data:', error);
